@@ -9,8 +9,6 @@ echo  "Setting up VibeSync Blog Platform..."
 echo "==========================================="
 
 APP_DIR="/var/www/vibesync"
-SOURCE_DIR="${SOURCE_DIR:-$HOME/vibesync}"   # where you scp'd/cloned the project to first
-DOMAIN="${DOMAIN:-_}"
 
 # --- Update system ---
 echo " Updating system packages..."
@@ -44,7 +42,7 @@ cp -r ~/VibeSync---Blog-DevSecOps-Pipeline/* /var/www/vibesync/
 echo " Installing and building backend..."
 cd "$APP_DIR/backend"
 npm install --production
-
+npm run build
 echo "Backend built"
 
 # --- Build frontend ---
