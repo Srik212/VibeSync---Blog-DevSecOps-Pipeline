@@ -56,7 +56,7 @@ echo "Frontend built"
 
 # --- Configure Nginx ---
 echo "Configuring Nginx..."
-sudo cp "$APP_DIR/deploy/nginx.conf" /etc/nginx/sites-available/vibesync
+sudo cp "$APP_DIR/deploy/vibesync-nginx.conf" /etc/nginx/sites-available/vibesync
 sudo ln -sf /etc/nginx/sites-available/vibesync /etc/nginx/sites-enabled/vibesync
 sudo rm -f /etc/nginx/sites-enabled/default
 sudo nginx -t
