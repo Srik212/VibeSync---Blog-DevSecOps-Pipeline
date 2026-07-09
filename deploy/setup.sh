@@ -42,13 +42,17 @@ cp -r ~/VibeSync---Blog-DevSecOps-Pipeline/. /var/www/vibesync/
 echo " Installing and building backend..."
 cd "/var/www/vibesync/backend"
 npm install
-npm run build
-if [ ! -f "dist/index.js" ]; then
-    echo "ERROR: Build failed. dist/index.js not found"
-    find . -name "index.js"
+
+echo "Checking TypeScript..."
+
+if [ ! -f "node_modules/.bin/tsc" ]; then
+    echo "ERROR: TypeScript compiler missing"
     exit 1
 fi
-npm prune --production
+
+echo "Building backend..."
+
+npm run build
 
 # --- Build frontend ---
 echo "Building frontend..."
