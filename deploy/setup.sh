@@ -36,13 +36,19 @@ echo "Setting up project..."
 sudo mkdir -p "$APP_DIR"
 sudo chown -R "$USER":"$USER" "$APP_DIR"
 
-cp -r ~/VibeSync---Blog-DevSecOps-Pipeline/* /var/www/vibesync/
+cp -r ~/VibeSync---Blog-DevSecOps-Pipeline/. /var/www/vibesync/
 
 # --- Backend: install, configure, build ---
 echo " Installing and building backend..."
 cd "/var/www/vibesync/backend"
-npm install --production
-echo "Backend built"
+npm install
+npm run build
+if [ ! -f "dist/index.js" ]; then
+    echo "ERROR: Build failed. dist/index.js not found"
+    find . -name "index.js"
+    exit 1
+fi
+npm prune --production
 
 # --- Build frontend ---
 echo "Building frontend..."
