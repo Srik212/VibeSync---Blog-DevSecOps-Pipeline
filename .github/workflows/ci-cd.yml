@@ -1,0 +1,28 @@
+# VibeSync - DevSecOps Pipeline
+
+name: VibeSync CI/CD Pipeline
+
+on:
+  push:
+    branches: ["*"]
+  pull_request:
+    branches: ["*"]
+
+permissions:
+    contents: read
+
+
+env:
+    # Define the environment variables for the pipeline
+    APP_NAME: VibeSync
+    DOCKER_REGISTRY: ghcr.io
+    BACKEND_IMAGE: ghcr.io/${{ github.repository }}/vibesync-backend
+    FRONTEND_IMAGE: ghcr.io/${{ github.repository }}/vibesync-frontend
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Build
+        run: echo "Building VibeSync application..."
