@@ -40,14 +40,14 @@ cp -r ~/VibeSync---Blog-DevSecOps-Pipeline/* /var/www/vibesync/
 
 # --- Backend: install, configure, build ---
 echo " Installing and building backend..."
-cd "$APP_DIR/backend"
+cd "/var/www/vibesync/backend"
 npm install --production
 npm run build
 echo "Backend built"
 
 # --- Build frontend ---
 echo "Building frontend..."
-cd "$APP_DIR/frontend"
+cd "/var/www/vibesync/frontend"
 npm install
 npm run build
 echo "Frontend built"
@@ -63,7 +63,7 @@ sudo systemctl enable nginx
 
 # --- Start backend with PM2 ---
 echo "Starting backend with PM2..."
-cd "$APP_DIR/backend"
+cd "/var/www/vibesync/backend"
 pm2 start dist/index.js --name vibesync-backend   # compiled output, not src/index.js
 pm2 save
 pm2 startup systemd -u "$USER" --hp "/home/$USER" | tail -1 | sudo bash
