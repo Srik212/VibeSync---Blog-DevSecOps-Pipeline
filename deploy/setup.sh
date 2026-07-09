@@ -42,7 +42,6 @@ cp -r ~/VibeSync---Blog-DevSecOps-Pipeline/* /var/www/vibesync/
 echo " Installing and building backend..."
 cd "/var/www/vibesync/backend"
 npm install --production
-npm run build
 echo "Backend built"
 
 # --- Build frontend ---
@@ -54,7 +53,7 @@ echo "Frontend built"
 
 # --- Configure Nginx ---
 echo "Configuring Nginx..."
-sudo cp "$APP_DIR/deploy/vibesync-nginx.conf" /etc/nginx/sites-available/vibesync
+sudo cp "/var/www/vibesync/deploy/vibesync-nginx.conf" /etc/nginx/sites-available/vibesync
 sudo ln -sf /etc/nginx/sites-available/vibesync /etc/nginx/sites-enabled/vibesync
 sudo rm -f /etc/nginx/sites-enabled/default
 sudo nginx -t
