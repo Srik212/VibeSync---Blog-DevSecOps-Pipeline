@@ -36,12 +36,12 @@ echo "Setting up project..."
 sudo mkdir -p "$APP_DIR"
 sudo chown -R "$USER":"$USER" "$APP_DIR"
 
-cp -r ~/VibeSync---Blog-DevSecOps-Pipeline/. /var/www/vibesync/
+cp -r ~/VibeSync---Blog-DevSecOps-Pipeline/* /var/www/vibesync/
 
 # --- Backend: install, configure, build ---
 echo " Installing and building backend..."
 cd "/var/www/vibesync/backend"
-npm install
+npm install 
 
 echo "Checking TypeScript..."
 
