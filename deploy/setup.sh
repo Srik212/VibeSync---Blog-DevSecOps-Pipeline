@@ -38,35 +38,21 @@ echo "Setting up project..."
 sudo mkdir -p "$APP_DIR"
 sudo chown -R "$USER":"$USER" "$APP_DIR"
 
-if [ ! -d "$SOURCE_DIR" ]; then
-  echo "$SOURCE_DIR not found. scp your project there first, e.g.:"
-  echo "   scp -r ./vibesync ubuntu@<ec2-ip>:~/vibesync"
-  echo "   (or: git clone <your-repo-url> $SOURCE_DIR )"
-  exit 1
-fi
-cp -r "$SOURCE_DIR"/* "$APP_DIR"/
+cp -r ~/VibeSync---Blog-DevSecOps-Pipeline/* /var/www/vibesync/
 
 # --- Backend: install, configure, build ---
 echo " Installing and building backend..."
 cd "$APP_DIR/backend"
-npm install   # full install, not --production — tsc (a devDependency) is needed to build
+npm install --production
 
-if [ ! -f .env ]; then
-  echo " No .env found — creating one with a generated JWT secret."
-  cp .env.example .env
-  JWT_SECRET="$(openssl rand -hex 32)"
-  sed -i "s#^JWT_SECRET=.*#JWT_SECRET=${JWT_SECRET}#" .env
-fi
-
-npm run build   # compiles src/ -> dist/
-echo "✅ Backend built"
+echo "Backend built"
 
 # --- Build frontend ---
 echo "Building frontend..."
 cd "$APP_DIR/frontend"
 npm install
 npm run build
-echo "✅ Frontend built"
+echo "Frontend built"
 
 # --- Configure Nginx ---
 echo "Configuring Nginx..."
