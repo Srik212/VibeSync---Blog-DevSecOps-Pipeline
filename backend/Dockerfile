@@ -1,33 +1,31 @@
-FROM node:20-bookworm-slim AS base
+# Build Stage
+FROM node:20-alpine AS build
 WORKDIR /app
 COPY package*.json ./
-
-# --- dev: full deps, hot reload via ts-node-dev ---
-FROM base AS dev
-RUN apt-get update && apt-get install -y --no-install-recommends python3 make g++ \
-    && rm -rf /var/lib/apt/lists/*
-RUN npm install
-COPY . .
-EXPOSE 5000
-CMD ["npm", "run", "dev"]
-
-# --- build: compile TypeScript to dist/ ---
-FROM base AS build
-RUN apt-get update && apt-get install -y --no-install-recommends python3 make g++ \
-    && rm -rf /var/lib/apt/lists/*
-RUN npm ci
-COPY . .
+RUN npm ci && npm cache clean --force
+COPY tsconfig.json ./
+COPY src/ ./src/
 RUN npm run build
 
-# --- prod: minimal runtime image ---
-FROM node:20-bookworm-slim AS prod
+# Production Stage
+FROM node:20-alpine AS prod
+
+RUN addgroup -S appgroup && adduser -S appuser -G appgroup
+
+RUN apk --no-cache add dumb-init
+
 WORKDIR /app
-ENV NODE_ENV=production
+
 COPY package*.json ./
-RUN apt-get update && apt-get install -y --no-install-recommends python3 make g++ \
-    && npm ci --omit=dev \
-    && apt-get purge -y python3 make g++ && apt-get autoremove -y \
-    && rm -rf /var/lib/apt/lists/*
+RUN npm ci --only=production && npm cache clean --force
 COPY --from=build /app/dist ./dist
+
+RUN chown -R appuser:appgroup /app
+
+USER appuser
+
 EXPOSE 5000
-CMD ["node", "dist/index.js"]
+
+ENTRYPOINT [ "dumb-init", "--" ]
+CMD [ "node", "dist/index.js" ]
+

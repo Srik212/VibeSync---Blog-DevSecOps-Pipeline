@@ -1,0 +1,1 @@
+{"root":["./src/app.tsx","./src/main.tsx","./src/api/client.ts","./src/components/authforms.tsx","./src/components/posteditor.tsx","./src/components/postlist.tsx","./src/components/postview.tsx","./src/components/tagfilter.tsx","./src/hooks/useofflinecache.ts"],"version":"5.9.3"}
