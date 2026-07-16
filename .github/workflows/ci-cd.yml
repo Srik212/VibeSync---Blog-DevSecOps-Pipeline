@@ -44,9 +44,10 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: SonarCloud SAST Analysis 
+      - name: SonarCloud SAST Analysis
         uses: sonarsource/sonarcloud-github-action@v4
         env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
 
       - name: SonarCloud Quality Gate Check
@@ -56,7 +57,7 @@ jobs:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
 
       - name: Synk Code Scan
-        uses: snyk/actions@master
+        uses: snyk/actions/node@master
         env:
           SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
         with:
@@ -76,11 +77,11 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Synk Dependency Scan
-        uses: snyk/actions@master
+        uses: snyk/actions/node@master
         env:
           SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
         with:
-          args: --file=services/api/requirements.txt --severity-threshold=high --sarif-file-output=snyk-oss.sarif
+          args: --file=backend/package.json --severity-threshold=high --sarif-file-output=snyk-oss.sarif
       - uses: github/codeql-action/upload-sarif@v3
         if: always()
         with:
