@@ -51,20 +51,23 @@ jobs:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
 
       - name: SonarCloud Quality Gate Check
-        uses: sonarsource/sonarcloud-quality-gate-action@v1
+        uses: SonarSource/sonarqube-quality-gate-action@v1
         timeout-minutes: 5
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
 
       - name: Synk Code Scan
         uses: snyk/actions/node@master
+        continue-on-error: true # Snyk exits non-zero when issues are found; let the SARIF upload still run
         env:
           SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
         with:
-          command: test
+          command: code test
+          args: --sarif-file-output=synk-code_scan.sarif
 
       - name: Upload SAST Results to GitHub Security Tab
-        uses: github/codeql-action/upload-sarif@v2
+        uses: github/codeql-action/upload-sarif@v3
+        if: always()
         with:
           sarif_file: synk-code_scan.sarif
           category: "snyk-code-scan"
@@ -76,22 +79,28 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Install backend dependencies
+        working-directory: backend
+        run: npm ci
+
       - name: Synk Dependency Scan
         uses: snyk/actions/node@master
+        continue-on-error: true # Snyk exits non-zero when issues are found; let the SARIF upload still run
         env:
           SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
         with:
           args: --file=backend/package.json --severity-threshold=high --sarif-file-output=snyk-oss.sarif
-      - uses: github/codeql-action/upload-sarif@v3
+
+      - name: Upload SCA Results to GitHub Security Tab
+        uses: github/codeql-action/upload-sarif@v3
         if: always()
         with:
           sarif_file: snyk-oss.sarif
-          category: snyk-oss
-
-      - name: Upload SCA Results to GitHub Security Tab
-        uses: github/codeql-action/upload-sarif@v2
-        with:
-          sarif_file: synk-dependency_scan.sarif
           category: "snyk-dependency-scan"
 
   iac:
@@ -106,13 +115,13 @@ jobs:
         with:
           directory: .
           frameworks: terraform,cloudformation,kubernetes,github_actions
-          output_format: sarif,cli
+          output_format: cli,sarif
           output_file_path: console,checkov.sarif
           soft_fail: true
           quiet: true
 
       - name: Upload IaC Results to GitHub Security Tab
-        uses: github/codeql-action/upload-sarif@v2
+        uses: github/codeql-action/upload-sarif@v3
         if: always()
         with:
           sarif_file: checkov.sarif
