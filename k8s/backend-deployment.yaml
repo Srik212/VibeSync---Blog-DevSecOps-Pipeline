@@ -1,0 +1,29 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: backend
+  labels:
+    app: backend
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: backend
+  template:
+    metadata:
+      labels:
+        app: backend
+    spec:
+      containers:
+        - name: backend
+          image: vibesync-backend:local
+          imagePullPolicy: Never
+          ports:
+            - containerPort: 5000
+          env:
+            - name: PORT
+              value: "5000"
+            - name: JWT_SECRET
+              value: "temporary-dev-secret-do-not-use-in-prod"
+            - name: DB_PATH
+              value: "/tmp/data.sqlite"
