@@ -44,16 +44,10 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: SonarCloud SAST Analysis
+      - name: SonarCloud SAST Analysis (waits on Quality Gate)
         uses: SonarSource/sonarqube-scan-action@v8
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-
-      - name: SonarCloud Quality Gate Check
-        uses: SonarSource/sonarqube-quality-gate-action@v1
-        timeout-minutes: 5
-        env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
 
       - name: Synk Code Scan
