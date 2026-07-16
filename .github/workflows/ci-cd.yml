@@ -58,6 +58,7 @@ jobs:
 
       - name: Synk Code Scan
         uses: snyk/actions/node@master
+        if: always() # Independent of the SonarCloud steps; don't skip it if they fail
         continue-on-error: true # Snyk exits non-zero when issues are found; let the SARIF upload still run
         env:
           SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
